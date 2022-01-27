@@ -1,8 +1,9 @@
 import "./App.css";
 import React from "react";
-import Button from "../Button/Button";
+import _ from "lodash";
 import Todo from "../Todo/Todo";
-import getAllTodos from "../../api/todos";
+import { getAllTodos, deleteTodo } from "../../api/todos";
+import "bulma/css/bulma.min.css";
 
 export default class App extends React.Component {
   constructor(props) {
@@ -10,39 +11,45 @@ export default class App extends React.Component {
     this.state = {
       todos: [],
     };
+    this.onDeleteTodo = this.onDeleteTodo.bind(this);
   }
 
   componentDidMount() {
     getAllTodos().then((res) => {
       const todos = res.data;
       this.setState({ todos });
-      console.log(todos);
     });
+  }
+
+  onDeleteTodo(todoID) {
+    deleteTodo(todoID)
+      .then((res) => {
+        const updateTodos = this.state.todos;
+        _.remove(updateTodos, (todo) => {
+          return todo.id === todoID;
+        });
+        this.setState({ todos: updateTodos });
+      })
+      .catch((err) => console.log(err));
   }
 
   render() {
     return (
       <div className="App">
-        {this.state.todos.map((value, index) => {
-          return <Todo key={index} value={value}/>;
-        })}
+        <div className="columns">
+          <div className="column is-half is-offset-one-quarter">
+            {this.state.todos.map((todo, index) => {
+              return (
+                <Todo
+                  key={index}
+                  todo={todo}
+                  onDeleteTodo={this.onDeleteTodo}
+                />
+              );
+            })}
+          </div>
+        </div>
       </div>
     );
-    {
-      /* <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header> */
-    }
   }
 }
