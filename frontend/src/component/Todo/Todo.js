@@ -4,20 +4,40 @@ import { updateTodo } from "../../api/todos";
 export default class Todo extends React.Component {
   constructor(props) {
     super(props);
+    console.log(props.todo);
     this.state = {
       isEditing: false,
       text: this.props.todo.text,
+      isDone: this.props.todo.is_done,
     };
 
     this.toggleEdit = this.toggleEdit.bind(this);
     this.cancelEdit = this.cancelEdit.bind(this);
     this.applyEdit = this.applyEdit.bind(this);
     this.deleteTodo = this.deleteTodo.bind(this);
-    this.handleTextChange = this.handleTextChange.bind(this);
+    this.handleInputChange = this.handleInputChange.bind(this);
   }
 
-  handleTextChange(event) {
-    this.setState({ text: event.target.value });
+  handleInputChange(event) {
+    const target = event.target;
+    const name = target.name;
+    const type = target.type;
+    let value = "";
+
+    if (type === "checkbox") {
+      value = target.checked;
+      this.toggleTodo(value)
+    } else {
+      value = target.value;
+    }
+
+    this.setState({ [name]: value });
+  }
+
+  toggleTodo(checked) {
+    const payload = this.props.todo;
+    payload.is_done = checked;
+    updateTodo(payload);
   }
 
   toggleEdit() {
@@ -27,10 +47,11 @@ export default class Todo extends React.Component {
   showEditingBox() {
     return (
       <input
+        name="text"
         className="input"
         type="text"
         defaultValue={this.state.text}
-        onChange={this.handleTextChange}
+        onChange={this.handleInputChange}
       />
     );
   }
@@ -89,7 +110,12 @@ export default class Todo extends React.Component {
         <div className="columns is-vcentered">
           <div className="column is-2">
             <label className="checkbox">
-              <input type="checkbox" />
+              <input
+                name="isDone"
+                type="checkbox"
+                checked={this.state.isDone}
+                onChange={this.handleInputChange}
+              />
             </label>
           </div>
           <div className="column is-flex">

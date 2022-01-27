@@ -11,4 +11,5 @@ function deleteTodo(todoID) {
   return axios.delete(`http://localhost:8000/todos/${todoID}/`);
 }
 
-module.exports = { getAllTodos, updateTodo, deleteTodo };
+module.exports = { getAllTodos, updateTodo, deleteTodo};
+
