@@ -26,7 +26,7 @@ export default class Todo extends React.Component {
 
     if (type === "checkbox") {
       value = target.checked;
-      this.toggleTodo(value)
+      this.toggleTodo(value);
     } else {
       value = target.value;
     }
